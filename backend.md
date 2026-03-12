@@ -1,151 +1,201 @@
-# AgriSense — Flask Backend
+# AgriSense v2.0 — Flask Backend + Weather API
 
 ## Project Structure
 ```
 agrisense/
-├── app.py              ← Flask API server
-├── train_models.py     ← ML model training script
-├── requirements.txt    ← Python dependencies
-├── models/             ← Saved ML model files (auto-created)
+├── app.py                          ← Flask API (v2 with weather)
+├── train_models.py                 ← ML model training script
+├── requirements.txt                ← Python dependencies
+├── models/                         ← Saved .pkl model files
 │   ├── crop_model.pkl
 │   ├── yield_model.pkl
 │   ├── price_model.pkl
-│   ├── label_encoder.pkl
-│   └── crop_data.csv
+│   └── label_encoder.pkl
 └── static/
-    └── index.html      ← Place your frontend HTML here
+    └── index.html                  ← Place frontend HTML here
 ```
 
 ---
 
-## Setup & Run
+## Quick Start (3 steps)
 
-### 1. Install dependencies
 ```bash
+# 1. Install dependencies
 pip install -r requirements.txt
-```
 
-### 2. Train ML models (run once)
-```bash
+# 2. Train ML models (run once)
 python train_models.py
-```
-This generates a synthetic dataset and trains 3 Random Forest models with ~88% accuracy.
 
-### 3. Start the Flask server
-```bash
+# 3. Set weather API key and start server
+export OPENWEATHER_API_KEY="your_free_key_here"
 python app.py
 ```
-Server runs at: `http://localhost:5000`
+
+Server runs at: **http://localhost:5000**
+
+---
+
+## Getting a Free Weather API Key
+
+1. Go to https://openweathermap.org/api
+2. Click **Sign Up** (free)
+3. After confirming email, go to **API Keys** tab
+4. Copy your default key (or create a new one)
+5. Wait ~10 minutes for key to activate
+
+Free tier includes:
+- 1,000 API calls/day
+- Current weather data
+- Global city coverage
 
 ---
 
 ## API Endpoints
 
 ### POST /api/predict
-**Get crop recommendation, yield estimate, and price forecast.**
+Crop recommendation + yield + price prediction.
 
-Request:
-```json
-{
-  "N": 90,
-  "P": 42,
-  "K": 43,
-  "ph": 6.5,
-  "humidity": 82,
-  "temperature": 27,
-  "rainfall": 200,
-  "region": "South India",
-  "season": "Kharif"
-}
+```bash
+curl -X POST http://localhost:5000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "N": 90, "P": 42, "K": 43, "ph": 6.5,
+    "humidity": 82, "temperature": 27, "rainfall": 200,
+    "region": "South India", "season": "Kharif"
+  }'
 ```
 
-Response:
+**With live weather auto-merge:**
+```bash
+curl -X POST http://localhost:5000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "N": 90, "P": 42, "K": 43, "ph": 6.5,
+    "use_weather": true, "city": "Chennai"
+  }'
+```
+
+**Response:**
 ```json
 {
   "prediction_id": "a1b2c3d4",
-  "crop": {
-    "name": "Rice",
-    "icon": "🌾",
-    "insight": "Maintain 5-10 cm water depth during tillering.",
-    "seasons": ["Kharif"]
-  },
-  "yield": {
-    "value": 4.23,
-    "unit": "tonnes/ha",
-    "range": [3.81, 4.65]
-  },
-  "price": {
-    "value": 2050,
-    "unit": "Rs/quintal"
-  },
+  "crop": { "name": "Rice", "icon": "🌾", "insight": "...", "seasons": ["Kharif"] },
+  "yield":  { "value": 4.23, "unit": "tonnes/ha", "range": [3.81, 4.65] },
+  "price":  { "value": 2050, "unit": "Rs/quintal" },
   "confidence": 87.4,
   "top3": [
-    {"crop": "Rice", "probability": 87.4},
-    {"crop": "Maize", "probability": 8.2},
-    {"crop": "Sugarcane", "probability": 4.4}
+    { "crop": "Rice",      "probability": 87.4 },
+    { "crop": "Maize",     "probability": 8.2  },
+    { "crop": "Sugarcane", "probability": 4.4  }
   ],
-  "inputs": {"N": 90, "P": 42, ...},
+  "weather": { ... },
   "timestamp": "2025-03-08T10:30:00Z"
 }
 ```
 
+---
+
+### GET /api/weather?city=Chennai
+Returns full live weather for any city.
+
+```bash
+curl http://localhost:5000/api/weather?city=Chennai
+```
+
+**Response:**
+```json
+{
+  "weather": {
+    "city": "Chennai", "country": "IN",
+    "temperature": 32.4, "feels_like": 38.1,
+    "humidity": 78, "pressure": 1008,
+    "condition": "Clear", "description": "Clear sky",
+    "icon_url": "https://openweathermap.org/img/wn/01d@2x.png",
+    "wind_speed": 4.2, "clouds_pct": 10,
+    "rainfall_mm": 0.0,
+    "advisory": "Clear skies — ideal for field operations and spraying.",
+    "sunrise": "06:14 UTC", "sunset": "12:28 UTC"
+  }
+}
+```
+
+---
+
+### GET /api/weather/autofill?city=Chennai
+Returns weather shaped as form input values (used by the frontend).
+
+```bash
+curl http://localhost:5000/api/weather/autofill?city=Mumbai
+```
+
+**Response:**
+```json
+{
+  "city": "Mumbai", "country": "IN",
+  "autofill": {
+    "temperature": 29.5,
+    "humidity": 85,
+    "rainfall": 0.0
+  },
+  "display": {
+    "condition": "Clouds",
+    "description": "Broken clouds",
+    "icon_url": "...",
+    "feels_like": 34.2,
+    "temp_min": 27.1, "temp_max": 31.0,
+    "wind_speed": 5.1,
+    "advisory": "Overcast — moderate evaporation, monitor soil moisture."
+  }
+}
+```
+
+---
+
 ### GET /api/health
-Returns server status and model info.
+```json
+{
+  "status": "ok",
+  "models": ["crop_model", "yield_model", "price_model"],
+  "crops": 10,
+  "weather_api": "configured",
+  "time": "2025-03-08T10:30:00Z"
+}
+```
 
 ### GET /api/crops
-Returns all 10 supported crops with metadata.
+List all 10 supported crops with metadata.
 
 ### GET /api/history?limit=50
-Returns server-side prediction log.
+Server-side prediction log.
 
 ### POST /api/feedback
-Submit feedback on a prediction result.
 ```json
 { "prediction_id": "a1b2c3d4", "correct": false, "actual_crop": "Maize" }
 ```
 
 ---
 
-## Connecting the Frontend
+## How Weather Integration Works
 
-In your `static/index.html`, replace the mock `setTimeout` in `runPrediction()` with:
-
-```javascript
-async function runPrediction() {
-  const payload = {
-    N: parseFloat(document.getElementById('nitrogen').value),
-    P: parseFloat(document.getElementById('phosphorus').value),
-    K: parseFloat(document.getElementById('potassium').value),
-    ph: parseFloat(document.getElementById('ph').value),
-    humidity: parseFloat(document.getElementById('humidity').value),
-    temperature: parseFloat(document.getElementById('temperature').value),
-    rainfall: parseFloat(document.getElementById('rainfall').value),
-    region: document.getElementById('region').value,
-    season: document.getElementById('season').value,
-  };
-
-  const response = await fetch('http://localhost:5000/api/predict', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    alert('Error: ' + (result.details || result.error));
-    return;
-  }
-
-  // Use result.crop.name, result.yield.value, result.price.value, result.confidence
-  showResult(result);
-}
+```
+User types city name
+        ↓
+Frontend calls GET /api/weather/autofill?city=Chennai
+        ↓
+Flask calls OpenWeatherMap API
+        ↓
+Returns: temperature=32°C, humidity=78%, rainfall=0mm
+        ↓
+Frontend auto-fills those 3 form fields (highlighted in blue)
+        ↓
+User fills remaining soil fields (N, P, K, pH)
+        ↓
+Frontend calls POST /api/predict with all values
+        ↓
+ML models return: Crop=Rice, Yield=4.3t, Price=Rs.2000, Confidence=87%
 ```
 
 ---
-
-## Supported Crops
-Rice, Wheat, Maize, Cotton, Sugarcane, Chickpea, Lentil, Mango, Banana, Grapes
 
 ## Input Ranges
 | Field       | Min  | Max  | Unit     |
@@ -157,3 +207,6 @@ Rice, Wheat, Maize, Cotton, Sugarcane, Chickpea, Lentil, Mango, Banana, Grapes
 | humidity    | 14   | 100  | %        |
 | temperature | 0    | 50   | °C       |
 | rainfall    | 0    | 300  | mm       |
+
+## Supported Crops
+Rice, Wheat, Maize, Cotton, Sugarcane, Chickpea, Lentil, Mango, Banana, Grapes
