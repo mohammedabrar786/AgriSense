@@ -221,6 +221,8 @@ def crops():
     ], "total": len(label_encoder.classes_)})
 
 
+
+
 # ── Weather routes ─────────────────────────────────────────────────────────
 
 @app.route("/api/weather")
@@ -363,6 +365,7 @@ def predict():
 def history():
     limit = min(int(request.args.get("limit", 50)), 100)
     return jsonify({"history": prediction_history[:limit], "total": len(prediction_history)})
+
 
 
 @app.route("/api/feedback", methods=["POST"])
