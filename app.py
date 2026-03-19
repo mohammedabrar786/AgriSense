@@ -280,6 +280,27 @@ def weather_autofill():
         return jsonify({"error": str(e)}), 400
     except ConnectionError as e:
         return jsonify({"error": str(e)}), 503
+    
+# ── Market Prices Route ─────────────────────────────
+
+@app.route("/api/mandi")
+def mandi_prices():
+    import urllib.request, json
+
+    API_KEY = "579b464db66ec23bdd000001901a897fecc543906b76db918dc0f11a"
+
+    url = (
+        "https://api.data.gov.in/resource/"
+        "9ef84268-d588-465a-a308-a864a43d0070"
+        f"?api-key={API_KEY}&format=json&limit=20"
+    )
+
+    try:
+        with urllib.request.urlopen(url, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ── Predict route ──────────────────────────────────────────────────────────
@@ -391,3 +412,4 @@ if __name__ == "__main__":
     print(f"  Weather key : {'SET ✓' if WEATHER_API_KEY else 'NOT SET — get one free at openweathermap.org'}")
     print(f"  Server      : http://localhost:5000\n")
     app.run(host="0.0.0.0", port=5000, debug=True)
+

@@ -52,7 +52,7 @@ body{background:var(--white);color:var(--black);font-family:'Syne',sans-serif;mi
   border:1px solid rgba(255,255,255,.1);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;flex-shrink:0;transition:background .2s;
-  color:rgba(255,255,255,.4);font-size:.75rem;
+  color:rgba(255, 255, 255, 0.626);font-size:.75rem;
 }
 .sb-toggle:hover{background:rgba(200,255,0,.15);color:var(--lime);}
 
@@ -262,7 +262,7 @@ input[type=number],select{
   width:100%;background:var(--gray);border:2px solid var(--gray2);border-radius:8px;
   color:var(--black);font-family:'Syne',sans-serif;font-size:.88rem;font-weight:600;
   padding:11px 40px 11px 13px;transition:border-color .18s,box-shadow .18s,background .18s;
-  outline:none;-moz-appearance:textfield;cursor:text;
+  outline:none;appearance:textfield;cursor:text;
 }
 input::-webkit-inner-spin-button{-webkit-appearance:none;}
 input::placeholder{color:#bbb;font-weight:400;}
@@ -277,7 +277,7 @@ select{padding-right:13px;appearance:none;cursor:pointer;}
 .slider-val{font-family:'Unbounded',sans-serif;font-size:1.1rem;font-weight:900;color:var(--black);line-height:1;}
 .slider-unit{font-size:.58rem;color:var(--mid);font-weight:600;}
 input[type=range]{
-  -webkit-appearance:none;width:100%;height:5px;
+  appearance:none;width:100%;height:5px;
   background:var(--gray2);border-radius:3px;outline:none;cursor:pointer;border:none;padding:0;
 }
 input[type=range]::-webkit-slider-thumb{
@@ -655,6 +655,42 @@ footer{
     </div>
   </header>
 
+  <div class="tab-content" id="tab-market">
+  <div class="analytics-page">
+    <div class="page-title">Live Mandi Prices</div>
+    <div id="marketList"></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-cropdb">
+  <div class="analytics-page">
+    <div class="page-title">Crop Database</div>
+    <div id="cropList"></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-weathermap">
+  <div class="analytics-page">
+    <div class="page-title">Live Weather</div>
+
+    <div class="weather-bar">
+      <div class="wb-title">City Weather</div>
+      <div class="wb-row">
+        <input class="wb-input" type="text" id="liveCityInput"
+               placeholder="Enter city..."
+               onkeydown="if(event.key==='Enter')loadWeatherMap()"/>
+
+        <button class="btn-weather" onclick="loadWeatherMap()">
+          Get Weather
+        </button>
+      </div>
+
+      <div class="weather-card" id="liveWeatherCard"></div>
+    </div>
+
+  </div>
+</div>
+
   <!-- ─── CONTENT AREA ─── -->
   <div class="content-area">
 
@@ -674,14 +710,6 @@ footer{
         </div>
       </div>
 
-      <!-- CROP DATABASE TAB -->
-<div class="tab-content" id="tab-cropdb">
-  <div class="analytics-page">
-    <div class="page-title">Crop Database</div>
-    <div id="cropList"></div>
-  </div>
-</div>
-
       <!-- Form + Result Grid -->
       <div class="main-body">
 
@@ -691,32 +719,7 @@ footer{
             <div class="form-title">Input Parameters</div>
           </div>
 
-          <!-- WEATHER BAR -->
-          <div class="weather-bar">
-            <div class="wb-title">Live Weather</div>
-            <div class="wb-row">
-              <input class="wb-input" type="text" id="cityInput" placeholder="Enter city name..." onkeydown="if(event.key==='Enter')fetchWeather()"/>
-              <button class="btn-weather" id="weatherBtn" onclick="fetchWeather()">&#127774; Get Weather</button>
-            </div>
-            <div class="weather-card" id="weatherCard">
-              <div class="wc-inner">
-                <div class="wc-top">
-                  <div>
-                    <div class="wc-city" id="wcCity">--</div>
-                    <div class="wc-desc" id="wcDesc">--</div>
-                  </div>
-                  <div class="wc-temp" id="wcTemp">--</div>
-                </div>
-                <div class="wc-grid">
-                  <div class="wc-item"><div class="wi-val" id="wcHum">--</div><div class="wi-lbl">Humidity %</div></div>
-                  <div class="wc-item"><div class="wi-val" id="wcWind">--</div><div class="wi-lbl">Wind km/h</div></div>
-                  <div class="wc-item"><div class="wi-val" id="wcRain">--</div><div class="wi-lbl">Rain mm</div></div>
-                </div>
-                <div class="wc-advisory" id="wcAdvisory">--</div>
-                <div class="wc-autofill-note">&#9989; Temperature, Humidity &amp; Rainfall auto-filled below</div>
-              </div>
-            </div>
-          </div>
+          
 
           <!-- SOIL NUTRIENTS -->
           <div class="form-section">
@@ -1416,6 +1419,143 @@ function loadCrops() {
     .catch(err => {
       console.error("Crop load error:", err);
     });
+}
+
+async function loadWeatherMap() {
+    const city = document.getElementById("liveCityInput").value;
+    const card = document.getElementById("liveWeatherCard");
+
+    if (!city) {
+        card.innerHTML = "Please enter city name.";
+        return;
+    }
+
+    card.innerHTML = "Loading weather...";
+
+    try {
+        const res = await fetch(`/api/weather?city=${city}`);
+        const data = await res.json();
+
+        if (data.error) {
+            card.innerHTML = data.error;
+            return;
+        }
+
+        const w = data.weather;
+
+        card.innerHTML = `
+        <div class="wc-inner">
+            <div class="wc-top">
+                <div>
+                    <div class="wc-city">${w.city}</div>
+                    <div class="wc-desc">${w.description}</div>
+                </div>
+                <div class="wc-temp">${w.temperature}°C</div>
+            </div>
+
+            <div class="wc-grid">
+                <div class="wc-item">
+                    <div class="wi-val">${w.humidity}%</div>
+                    <div class="wi-lbl">Humidity</div>
+                </div>
+                <div class="wc-item">
+                    <div class="wi-val">${w.wind_speed} km/h</div>
+                    <div class="wi-lbl">Wind</div>
+                </div>
+                <div class="wc-item">
+                    <div class="wi-val">${w.rainfall_mm} mm</div>
+                    <div class="wi-lbl">Rainfall</div>
+                </div>
+            </div>
+
+            <div class="wc-advisory">
+                <strong>Advisory:</strong> ${w.advisory}
+            </div>
+        </div>
+        `;
+
+        card.classList.add("show");
+
+    } catch (err) {
+        card.innerHTML = "Failed to fetch weather.";
+    }
+}
+
+async function loadCrops() {
+    const container = document.getElementById("cropList");
+    container.innerHTML = "Loading crops...";
+
+    try {
+        const res = await fetch("/api/crops");
+        const data = await res.json();
+
+        let html = `<div class="crop-table">
+            <div class="table-header">
+                <div>Crop</div>
+                <div>Season</div>
+                <div>Insight</div>
+                <div>Status</div>
+            </div>`;
+
+        data.crops.forEach(c => {
+            html += `
+            <div class="table-row">
+                <div>${c.icon} ${c.name}</div>
+                <div>${c.seasons?.join(", ") || "-"}</div>
+                <div>${c.insight || "-"}</div>
+                <div><span class="tr-badge high">Active</span></div>
+            </div>
+            `;
+        });
+
+        html += "</div>";
+        container.innerHTML = html;
+
+    } catch (err) {
+        container.innerHTML = "Failed to load crop database.";
+    }
+}
+
+async function loadMarketPrices() {
+    const container = document.getElementById("marketList");
+    container.innerHTML = "Loading market prices...";
+
+    try {
+        const res = await fetch("/api/mandi");
+        const data = await res.json();
+
+        if (!data.records) {
+            container.innerHTML = "No market data available.";
+            return;
+        }
+
+        let html = `
+        <div class="crop-table">
+            <div class="table-header">
+                <div>Commodity</div>
+                <div>Market</div>
+                <div>State</div>
+                <div>Price ₹</div>
+            </div>
+        `;
+
+        data.records.forEach(r => {
+            html += `
+            <div class="table-row">
+                <div>${r.commodity}</div>
+                <div>${r.market}</div>
+                <div>${r.state}</div>
+                <div>₹ ${r.modal_price}</div>
+            </div>
+            `;
+        });
+
+        html += "</div>";
+        container.innerHTML = html;
+
+    } catch (err) {
+        container.innerHTML = "Failed to load market prices.";
+    }
 }
 
 </script>
