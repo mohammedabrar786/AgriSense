@@ -1,0 +1,177 @@
+version: "2"
+type: backend
+tech_stack:
+  - python
+  - flask
+  - scikit-learn
+  - numpy
+  - pickle (ML model persistence)
+  - OpenWeatherMap API (external weather data)
+features:
+  - name: Health Check
+    description: Returns API health status including loaded models and weather API configuration
+    files:
+      - app.py
+    endpoints:
+      - method: GET
+        path: /api/health
+        description: Health check with model and weather key status
+        auth_required: false
+        response_schema:
+          "200": "{ status: string, models: string[], crops: number, weather_api: string, time: string }"
+    depends_on: []
+
+  - name: Crop Listing
+    description: Lists all supported crops with metadata including icons, seasons, and farming insights
+    files:
+      - app.py
+    endpoints:
+      - method: GET
+        path: /api/crops
+        description: List all supported crops with metadata
+        auth_required: false
+        response_schema:
+          "200": "{ crops: CropInfo[], total: number }"
+    depends_on: []
+
+  - name: Crop Prediction
+    description: ML-powered crop recommendation, yield estimation, and price prediction based on soil and weather parameters. Supports optional live weather auto-fill.
+    files:
+      - app.py
+      - models/crop_model.pkl
+      - models/yield_model.pkl
+      - models/price_model.pkl
+      - models/label_encoder.pkl
+    endpoints:
+      - method: POST
+        path: /api/predict
+        description: Predict best crop, expected yield, and market price from soil/weather inputs
+        auth_required: false
+        request_schema:
+          body:
+            N: number (0-140, nitrogen kg/ha)
+            P: number (0-145, phosphorus kg/ha)
+            K: number (0-205, potassium kg/ha)
+            ph: number (3.5-9.5, soil pH)
+            humidity: number (14-100, percent)
+            temperature: number (0-50, celsius)
+            rainfall: number (0-300, mm)
+            use_weather: boolean (optional)
+            city: string (optional, for weather auto-fill)
+            region: string (optional)
+            season: string (optional)
+        response_schema:
+          "200": "{ prediction_id: string, crop: { name, icon, insight, seasons }, yield: { value, unit, range }, price: { value, unit }, confidence: number, top3: CropPrediction[], inputs: object, weather: object|null, timestamp: string }"
+          "400": "{ error: 'Content-Type must be application/json' }"
+          "422": "{ error: 'Validation failed', details: string[] }"
+    depends_on:
+      - Weather Data
+
+  - name: Weather Data
+    description: Fetches live weather data from OpenWeatherMap API for a given city, with farming advisories
+    files:
+      - app.py
+    endpoints:
+      - method: GET
+        path: /api/weather
+        description: Get full weather data for a city
+        auth_required: false
+        request_schema:
+          query:
+            city: string (required)
+        response_schema:
+          "200": "{ weather: WeatherData }"
+          "400": "{ error: string }"
+          "503": "{ error: string }"
+      - method: GET
+        path: /api/weather/autofill
+        description: Get weather data shaped as form input values for auto-filling prediction form
+        auth_required: false
+        request_schema:
+          query:
+            city: string (required)
+        response_schema:
+          "200": "{ city: string, country: string, autofill: { temperature, humidity, rainfall }, display: object, fetched_at: string }"
+          "400": "{ error: string }"
+          "503": "{ error: string }"
+    depends_on: []
+
+  - name: Prediction History
+    description: Returns the most recent prediction results stored in memory
+    files:
+      - app.py
+    endpoints:
+      - method: GET
+        path: /api/history
+        description: Get prediction history with optional limit
+        auth_required: false
+        request_schema:
+          query:
+            limit: number (optional, default 50, max 100)
+        response_schema:
+          "200": "{ history: Prediction[], total: number }"
+    depends_on:
+      - Crop Prediction
+
+  - name: User Feedback
+    description: Accepts user feedback on prediction accuracy
+    files:
+      - app.py
+    endpoints:
+      - method: POST
+        path: /api/feedback
+        description: Submit feedback on a prediction
+        auth_required: false
+        request_schema:
+          body:
+            prediction_id: string (required)
+            correct: boolean (optional)
+            actual_crop: string (optional)
+        response_schema:
+          "200": "{ status: 'received', prediction_id: string }"
+          "400": "{ error: 'Content-Type must be application/json' }"
+          "422": "{ error: 'prediction_id required' }"
+    depends_on:
+      - Crop Prediction
+
+  - name: Mandi Market Prices
+    description: Fetches live market prices from Indian government open data API
+    files:
+      - app.py
+    endpoints:
+      - method: GET
+        path: /api/mandi
+        description: Get live mandi (market) commodity prices
+        auth_required: false
+        response_schema:
+          "200": "Government API JSON response with market price records"
+          "500": "{ error: string }"
+    depends_on: []
+
+  - name: Static Frontend Serving
+    description: Serves the single-page HTML frontend from the static directory
+    files:
+      - app.py
+      - static/index.html
+    endpoints:
+      - method: GET
+        path: /
+        description: Serve the frontend HTML page or API info JSON
+        auth_required: false
+        response_schema:
+          "200": "HTML page or JSON API info"
+    depends_on: []
+
+known_limitations:
+  - issue: Prediction history is stored in-memory and lost on server restart
+    location: app.py
+    impact: No persistent storage of predictions across restarts
+  - issue: No authentication or rate limiting on any endpoint
+    location: app.py
+    impact: All endpoints are publicly accessible without restrictions
+  - issue: ML models trained with scikit-learn 1.7.2 loaded on 1.8.0 causing version warnings
+    location: app.py
+    impact: Potential for breaking changes or invalid results due to version mismatch
+  - issue: Mandi API key is hardcoded in source code
+    location: app.py
+    impact: Security risk - API key exposed in source

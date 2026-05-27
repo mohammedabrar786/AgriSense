@@ -409,7 +409,7 @@ def server_error(e): return jsonify({"error": "Server error"}), 500
 
 if __name__ == "__main__":
     print(f"\n  AgriSense API v2.0")
-    print(f"  Weather key : {'SET ✓' if WEATHER_API_KEY else 'NOT SET — get one free at openweathermap.org'}")
+    print(f"  Weather key : {'SET (ok)' if WEATHER_API_KEY else 'NOT SET - get one free at openweathermap.org'}")
     print(f"  Server      : http://localhost:5000\n")
     app.run(host="0.0.0.0", port=5000, debug=True)
 

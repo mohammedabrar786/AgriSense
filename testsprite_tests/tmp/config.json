@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000",
+  "backendAuthType": "public",
+  "executionArgs": {
+    "projectName": "Agrisense",
+    "projectPath": "d:\\Agrisense",
+    "testIds": [],
+    "additionalInstruction": "Run all backend API tests. The Flask server is running on port 5000 in development mode. Test all API endpoints: /api/health, /api/crops, /api/predict, /api/weather, /api/weather/autofill, /api/history, /api/feedback, /api/mandi. Note that the weather API requires an OPENWEATHER_API_KEY which is configured.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-gXGohdrVs8e0i5Lw_Gh8R6CxPKuRpOatsc6mafkdJx4g9e3Fp0YVLg7OpQKCSV4OAtxd_ctdeoFNUm-VmTR-YJXQgJu_SsBDgri2uE4CIlX0xgTQT-1uZuqUkVt2Ig0gQBo"
+    }
+  },
+  "serverPort": 58227
+}

@@ -1,0 +1,921 @@
+[
+  {
+    "id": "TC001",
+    "title": "Verify a crop prediction is returned from soil inputs",
+    "description": "This verifies a user can submit valid soil inputs and receive a complete crop recommendation with yield, price, confidence, and prediction history data.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil nitrogen, phosphorus, potassium, pH, humidity, temperature, and rainfall inputs"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a crop recommendation is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify yield estimate, price estimate, confidence, and prediction identifier are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Get a crop prediction from soil inputs",
+    "description": "Verify a user can submit soil inputs and receive a prediction response with the recommended crop, yield estimate, price estimate, confidence, and prediction identifier.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/predict"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil input values"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a crop recommendation is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify yield, price, confidence, and prediction details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Get a crop recommendation from soil inputs",
+    "description": "This verifies that a user can submit valid soil inputs and receive a complete crop prediction response.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the crop prediction workflow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil nitrogen content"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil phosphorus content"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil potassium content"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid soil temperature"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid soil humidity"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid soil pH value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid rainfall amount"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a crop recommendation is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify yield, price, confidence, top predictions, and a prediction identifier are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Get a weather-enriched crop prediction",
+    "description": "Verify a user can enable weather enrichment, provide a city, and receive a prediction that incorporates autofilled weather data into the result.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/predict"
+      },
+      {
+        "type": "action",
+        "description": "Enable weather-based prediction"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid city for weather autofill"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil input values"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a crop recommendation is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify weather-enriched prediction details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Verify service health and readiness",
+    "description": "This verifies the service reports healthy status with loaded models, crop metadata, and weather configuration so the app is ready for use.",
+    "category": "Health Check",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/health"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the service status is healthy"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify model information, crop count, and weather API state are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Check service health",
+    "description": "Verify the health endpoint reports the service is ready so operators can confirm models and weather configuration are loaded.",
+    "category": "Health Check",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/health"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify service health status is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify model and weather readiness details are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Verify weather autofill is merged into a prediction",
+    "description": "This verifies a user can request weather autofill for a city and complete a weather-enriched prediction using the returned values.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Enable weather-based prediction input"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a city for weather autofill"
+      },
+      {
+        "type": "action",
+        "description": "Request weather autofill"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction with the merged weather inputs"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify weather data is included in the prediction result"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a crop recommendation is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Confirm the app is ready for crop planning",
+    "description": "This verifies that the service health, supported crops, and frontend shell all load successfully so the app is ready to use.",
+    "category": "Static Frontend Serving",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/health"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the service health information is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to view supported crops"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify supported crop information is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the frontend home page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app shell and API information are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Check weather data for a city",
+    "description": "Verify a user can request weather data for a city and see the returned weather information used for planning.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/weather"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid city"
+      },
+      {
+        "type": "action",
+        "description": "Submit the weather request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify weather information is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Verify validation errors are shown for invalid prediction inputs",
+    "description": "This verifies invalid or missing prediction fields are rejected with visible validation feedback instead of producing a prediction.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Fill in an out-of-range or incomplete set of prediction inputs"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no prediction result is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "View weather details for a city",
+    "description": "This verifies that a user can request live weather data for a city and see the full weather summary needed for planning.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the weather data view"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid city name"
+      },
+      {
+        "type": "action",
+        "description": "Request weather data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a weather summary is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify temperature, humidity, rainfall, advisory, sunrise, and sunset data are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Verify weather data is displayed for a city",
+    "description": "This verifies a user can fetch live weather information for a city to support planning decisions.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Enter a city for weather lookup"
+      },
+      {
+        "type": "action",
+        "description": "Request the weather report"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify weather information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected city is reflected in the weather result"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Pre-fill prediction inputs from weather autofill",
+    "description": "This verifies that weather autofill returns form-ready values a user can use to start a prediction quickly.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the weather autofill view"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid city name"
+      },
+      {
+        "type": "action",
+        "description": "Request autofill values"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify city and country details are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify autofill temperature, humidity, rainfall, and display metadata are shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "View recent prediction history",
+    "description": "This verifies that recent predictions can be retrieved and reviewed through the history view.",
+    "category": "Prediction History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the prediction history view"
+      },
+      {
+        "type": "action",
+        "description": "Request the most recent prediction history"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify recent prediction entries are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the total number of stored predictions is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Verify prediction history shows recent results",
+    "description": "This verifies a user can view recently created predictions in the history view after submitting a prediction.",
+    "category": "Prediction History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Submit a valid prediction"
+      },
+      {
+        "type": "action",
+        "description": "Open the prediction history view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the recent prediction is displayed in history"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the history view includes prediction details"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "View supported crops metadata",
+    "description": "Verify the supported crop metadata page or data loads so users can review available crop options before predicting.",
+    "category": "Crop Listing",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/crops"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify supported crop metadata is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Verify supported crops are listed",
+    "description": "This verifies the crop catalog loads successfully with supported crop metadata and a total count for planning decisions.",
+    "category": "Crop Listing",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/crops"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the crop list is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the total crop count is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Verify the frontend app shell loads",
+    "description": "This verifies the main frontend page loads and exposes the application and API information needed to start using the service.",
+    "category": "Static Frontend Serving",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app shell is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify API information is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Load the frontend app shell",
+    "description": "Verify the root route serves the frontend app shell or API information so the application can be opened in the browser.",
+    "category": "Static Frontend Serving",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the frontend app shell or API information is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Check mandi market prices for a city",
+    "description": "Verify a user can request live mandi market prices and see commodity records for planning crop sales.",
+    "category": "Mandi Market Prices",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/mandi"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify market price records are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Review and submit feedback for a prediction",
+    "description": "This verifies that a user can open a recent prediction and submit correction feedback tied to that prediction.",
+    "category": "User Feedback",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the prediction history view"
+      },
+      {
+        "type": "action",
+        "description": "Open a recent prediction entry"
+      },
+      {
+        "type": "action",
+        "description": "Open the feedback form for that prediction"
+      },
+      {
+        "type": "action",
+        "description": "Fill in that the prediction was correct"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the actual crop if needed"
+      },
+      {
+        "type": "action",
+        "description": "Submit the feedback"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify feedback submission confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the feedback is associated with the selected prediction"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC022",
+    "title": "Submit feedback for a prior prediction",
+    "description": "Verify a user can submit correction feedback for a prediction after obtaining its identifier and receive confirmation that the feedback was recorded.",
+    "category": "User Feedback",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /api/predict"
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid soil input values"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction request"
+      },
+      {
+        "type": "action",
+        "description": "Open the feedback submission view"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the prediction identifier"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the correction details"
+      },
+      {
+        "type": "action",
+        "description": "Submit the feedback"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a feedback confirmation is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Verify feedback can be submitted for a prediction",
+    "description": "This verifies a user can send correction feedback tied to a prediction and receive a visible submission confirmation.",
+    "category": "User Feedback",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Submit a valid prediction"
+      },
+      {
+        "type": "action",
+        "description": "Open the feedback flow for that prediction"
+      },
+      {
+        "type": "action",
+        "description": "Enter a correction or rating"
+      },
+      {
+        "type": "action",
+        "description": "Submit the feedback"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a feedback confirmation is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submitted prediction remains available for reference"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Fetch live mandi prices for a market",
+    "description": "This verifies that a user can look up live mandi prices for planning crop sales.",
+    "category": "Mandi Market Prices",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the mandi market prices view"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid market or city name"
+      },
+      {
+        "type": "action",
+        "description": "Request market prices"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify mandi price results are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify commodity and price details are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "Verify mandi market prices are displayed for a market search",
+    "description": "This verifies a user can look up commodity prices for a market and review live market planning data.",
+    "category": "Mandi Market Prices",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Enter a market or city for mandi lookup"
+      },
+      {
+        "type": "action",
+        "description": "Request mandi prices"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify mandi price information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the market result includes commodity data"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Handle missing city for weather lookup",
+    "description": "This verifies that the weather form rejects a lookup when the city is omitted and shows a validation error.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the weather data view"
+      },
+      {
+        "type": "action",
+        "description": "Request weather data without entering a city"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a city-required validation error is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Verify weather lookup requires a city",
+    "description": "This verifies the weather lookup prevents submission when the city is missing and shows validation feedback instead of results.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the weather lookup flow"
+      },
+      {
+        "type": "action",
+        "description": "Request weather data without entering a city"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no weather result is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC028",
+    "title": "Limit history retrieval to the server maximum",
+    "description": "This verifies that requesting an oversized prediction history limit still returns a constrained history result.",
+    "category": "Prediction History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the prediction history view"
+      },
+      {
+        "type": "action",
+        "description": "Request prediction history with an oversized limit"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the returned history is constrained to the server maximum"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the total history count is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC029",
+    "title": "Reject feedback without a prediction identifier",
+    "description": "This verifies that feedback submission fails validation when the required prediction identifier is missing.",
+    "category": "User Feedback",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the feedback form"
+      },
+      {
+        "type": "action",
+        "description": "Fill in feedback details without a prediction identifier"
+      },
+      {
+        "type": "action",
+        "description": "Submit the feedback"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a prediction identifier required validation error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC030",
+    "title": "Verify prediction submission requires JSON input",
+    "description": "This verifies the prediction flow rejects invalid submission format and surfaces a clear content-type validation error.",
+    "category": "Crop Prediction",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the prediction submission flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit the prediction without valid JSON input"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a request format error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no prediction result is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC031",
+    "title": "Show unavailable weather guidance for an unknown city",
+    "description": "This verifies that the weather autofill flow surfaces an unavailable-state message when a city cannot be resolved through live weather lookup.",
+    "category": "Weather Data",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the weather autofill view"
+      },
+      {
+        "type": "action",
+        "description": "Fill in an unknown city name"
+      },
+      {
+        "type": "action",
+        "description": "Request autofill values"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an unavailable weather data message is visible"
+      }
+    ],
+    "priority": "Low"
+  }
+]

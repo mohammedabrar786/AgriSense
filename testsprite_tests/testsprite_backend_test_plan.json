@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "healthcheckapiresponsevalidation",
+    "description": "Verify GET /api/health returns 200 with correct status, loaded model names, crop count, weather API state, and server time under normal and misconfigured conditions."
+  },
+  {
+    "id": "TC002",
+    "title": "croplistingretrieval",
+    "description": "Verify GET /api/crops returns 200 with a list of supported crops including metadata and total count, and handles service unavailability with an error response."
+  },
+  {
+    "id": "TC003",
+    "title": "croppredictionvalidinput",
+    "description": "Verify POST /api/predict with valid JSON body returns 200 with prediction_id, crop recommendation, yield and price estimates, confidence, top3 predictions, inputs, weather data if requested, and timestamp."
+  },
+  {
+    "id": "TC004",
+    "title": "croppredictionweatherautofill",
+    "description": "Verify POST /api/predict with use_weather=true and city triggers GET /api/weather/autofill, merges weather data, and returns 200 with prediction results including weather data."
+  },
+  {
+    "id": "TC005",
+    "title": "croppredictioninvalidcontenttype",
+    "description": "Verify POST /api/predict with invalid Content-Type or malformed payload returns 400 with error stating Content-Type must be application/json."
+  },
+  {
+    "id": "TC006",
+    "title": "croppredictionvalidationerrors",
+    "description": "Verify POST /api/predict with missing or out-of-range fields returns 422 with validation failed error and details."
+  },
+  {
+    "id": "TC007",
+    "title": "weatherdatafetch",
+    "description": "Verify GET /api/weather with valid city query returns 200 with full weather data including temperature, humidity, rainfall, advisory, and sunrise/sunset."
+  },
+  {
+    "id": "TC008",
+    "title": "weatherdataautofillfetch",
+    "description": "Verify GET /api/weather/autofill with valid city query returns 200 with city, country, autofill values, display metadata, and fetched_at timestamp."
+  },
+  {
+    "id": "TC009",
+    "title": "predictionhistoryretrieval",
+    "description": "Verify GET /api/history with optional limit returns 200 with history array and total count, respects server-side max limit, and reflects recent predictions."
+  },
+  {
+    "id": "TC010",
+    "title": "userfeedbacksubmission",
+    "description": "Verify POST /api/feedback with valid JSON including prediction_id returns 200 with status received and prediction_id; invalid or missing prediction_id returns appropriate 400 or 422 errors."
+  }
+]
